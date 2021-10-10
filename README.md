@@ -1,0 +1,2 @@
+# Othello
+Linux Course Design
