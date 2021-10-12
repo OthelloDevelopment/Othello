@@ -19,6 +19,8 @@ static int area[8][8] = {{-1, -1, -1, -1, -1, -1, -1, -1},
 static int all = 0; // the sum of chess
 static int turn = 1; // 1 is black, 0 is white
 int nx, ny; // record x, y
+char sendmsg[70];
+int recvmsg[8][8];
 static void dialog_show(Othello *othello); // show the status and clear the board
 
 //以下三个函数为初始化控件成员函数指针，初始化控件成员变量和当状态按钮状态改变时的回调
@@ -145,9 +147,42 @@ void setbutton(int turn, int x, int y, Othello *othello) {
     gtk_widget_show(iref);
 }
 
+
+char *encodefunc() {
+    int i, j;
+    for(i=0;i<8;i++) {
+        for(j=0;j<8;j++) {
+            switch(area[i][j] == 0) {
+                case 0: sendmsg[i * 8 + j] = "0"; break;
+                case 1: sendmsg[i * 8 + j] = "1"; break;
+                case 2: sendmsg[i * 8 + j] = "2"; break;
+            }
+        }
+    }
+}
+
+
+void decodefunc() {
+    int i, j;
+    for(i=0;i<8;i++) {
+        for(j=0;j<8;j++) {
+            if(sendmsg[i * 8 + j] == "0") {
+                recvmsg[i][j] = 0;
+            }
+            else if(sendmsg[i * 8 + j] == "1") {
+                recvmsg[i][j] = 1;
+            }
+            else if(sendmsg[i * 8 + j] == "2") {
+                recvmsg[i][j] = 2;
+            }
+        }
+    }
+}
+
+
 //当表示棋盘格的状态按钮的状态改变时执行
 static void othello_toggle(GtkWidget *widget, Othello *othello) {
-    int i, j, m, n;
+    int i, j;
     gboolean istrue = TRUE;
     GtkWidget *image;
     GtkWidget *child;
@@ -258,6 +293,12 @@ static void othello_toggle(GtkWidget *widget, Othello *othello) {
             }
         }
     }
+    // if this is client
+    // send map
+    // receive refreshed map
+    // find difference
+    // render the view
+
     for(i=0;i<8;i++) {
         for(j=0;j<8;j++) {
             printf("%d ", area[i][j]);
